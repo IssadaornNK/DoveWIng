@@ -3,6 +3,7 @@ import 'pages/landing_page.dart';
 import 'pages/login.dart';
 import 'pages/homepage.dart';
 import 'pages/register.dart';
+import 'pages/profile.dart';
 
 void main() {
   runApp(DoveWingApp());
@@ -34,6 +35,7 @@ class DoveWingApp extends StatelessWidget {
         '/register':(context) => const RegisterPage(),
         '/home':(context) => const HomePage(),
         '/campaign': (context) => const CampaignPage(),
+        '/profile':(context) => ProfilePage(),
         }
     );
   }
