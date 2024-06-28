@@ -81,7 +81,7 @@ class LoginPage extends StatelessWidget {
                       ),
                       child: Text(
                         'Log in',
-                        style: TextStyle(fontSize: 18, color: Colors.blue),
+                        style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
                     ),
                     SizedBox(height: 20),
@@ -101,7 +101,7 @@ class LoginPage extends StatelessWidget {
                     SizedBox(height: 20),
                     OutlinedButton(
                       onPressed: () {
-                        // Create account action
+                        Navigator.pushNamed(context, '/register');
                       },
                       style: OutlinedButton.styleFrom(
                         padding:
