@@ -20,7 +20,7 @@ class HomePage extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.person, color: Color.fromARGB(255, 5, 119, 208)),
+            icon: const Icon(Icons.person_outline, color: Color.fromARGB(255, 5, 119, 208)),
             onPressed: () {
               Navigator.pushNamed(context, '/profile');
               // Handle profile icon tap

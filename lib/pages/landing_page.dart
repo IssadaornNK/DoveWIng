@@ -16,17 +16,17 @@ class LandingPage extends StatelessWidget {
             Container(
               width: 150,
               height: 150,
-              decoration: BoxDecoration(
-                color: Colors.transparent, // Example color for the logo square
-                borderRadius: BorderRadius.circular(20),
-              ),
+              decoration: const BoxDecoration(
+    color: Colors.transparent, // Example color for the logo square
+    shape: BoxShape.circle, // Set the shape to circle
+  ),
               child: Center(
-                child: Image.asset(
+                child: ClipOval(child: Image.asset(
                   'images/pic1.jpg', // Path to your sample image
-                  width: 100,
-                  height: 100,
+                  width: 217,
+                  height: 217,
                   fit: BoxFit.cover,
-                ),
+                ),),
               ),
             ),
            const SizedBox(height: 20), // Space between logo and description

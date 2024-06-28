@@ -1,8 +1,82 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:convert';
+import 'package:dove_wings/server/services/api_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  final ApiService apiService = ApiService();
+  String email = '';
+  bool isLoading = true;
+  String errorMessage = '';
+
+  @override
+  void initState() {
+    super.initState();
+    fetchEmail();
+  }
+
+  Future<void> fetchEmail() async {
+    setState(() {
+      isLoading = true;
+      errorMessage = '';
+    });
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    if (token == null || token.isEmpty) {
+      setState(() {
+        errorMessage = 'No token found';
+        isLoading = false;
+      });
+      return;
+    }
+
+    try {
+      final response = await http.get(Uri.parse('http://localhost:3307/user'),
+          headers: {'Authorization': 'Bearer $token'});
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          email = data['email'];
+          isLoading = false;
+        });
+      } else {
+        final errorData = jsonDecode(response.body);
+        setState(() {
+          errorMessage = 'Failed to load email: ${errorData['message']}';
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Error: ${e.toString()}';
+        isLoading = false;
+      });
+    }
+  }
+
+  void _logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('token');
+    Navigator.pop(context);
+    Navigator.pushNamed(context, '/login');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,21 +113,29 @@ class ProfilePage extends StatelessWidget {
               const Center(
                 child: CircleAvatar(
                   radius: 50,
-                  backgroundImage: AssetImage('images/pic1'), // Replace with your image asset
+                  backgroundImage: AssetImage(
+                      'images/pic1'), // Replace with your image asset
                 ),
               ),
               const SizedBox(height: 10),
               Center(
-                child: Text(
-                  'User Name',
-                  style: GoogleFonts.inika(
-                    textStyle: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 5, 119, 208),
-                    ),
-                  ),
-                ),
+                child: isLoading
+                    ? const CircularProgressIndicator()
+                    : errorMessage.isNotEmpty
+                        ? Text(
+                            'Error: $errorMessage',
+                            style: const TextStyle(color: Colors.red),
+                          )
+                        : Text(
+                            email,
+                            style: GoogleFonts.inika(
+                              textStyle: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromARGB(255, 5, 119, 208),
+                              ),
+                            ),
+                          ),
               ),
               const SizedBox(height: 20),
               const Divider(
@@ -132,7 +214,8 @@ class ProfilePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Image(
-                      image: AssetImage('images/campaign.jpg'), // Replace with your campaign image asset
+                      image: AssetImage(
+                          'images/campaign.jpg'), // Replace with your campaign image asset
                       height: 100,
                       width: double.infinity,
                       fit: BoxFit.cover,
@@ -179,15 +262,15 @@ class ProfilePage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 5, 119, 208), // background color
-                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                      backgroundColor: const Color.fromARGB(
+                          255, 5, 119, 208), // background color
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/login');
-                    },
+                    onPressed: _logout,
                     child: Text(
                       'Logout',
                       style: GoogleFonts.inika(

@@ -159,8 +159,9 @@ class _PaymentOptionState extends State<PaymentOption> {
               widget.label,
               style: GoogleFonts.inika(
                 textStyle: const TextStyle(
-                  fontSize: 18,
-                  color: Colors.black,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(255, 5, 119, 208),
                 ),
               ),
             ),

@@ -30,8 +30,8 @@ class PaymentSuccessPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 100,
-              height: 100,
+              width: 214,
+              height: 224,
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: Color.fromARGB(255, 5, 119, 208),
@@ -39,7 +39,7 @@ class PaymentSuccessPage extends StatelessWidget {
               child: const Icon(
                 Icons.check,
                 color: Colors.white,
-                size: 60,
+                size: 149,
               ),
             ),
             const SizedBox(height: 20),
@@ -55,7 +55,7 @@ class PaymentSuccessPage extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             Text(
-              'Thank you for making a difference',
+              'Thank you for making a difference.',
               style: GoogleFonts.inika(
                 textStyle: const TextStyle(
                   fontSize: 18,
