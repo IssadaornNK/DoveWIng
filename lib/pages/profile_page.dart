@@ -28,45 +28,17 @@ class _ProfilePageState extends State<ProfilePage> {
     fetchEmail();
   }
 
-  Future<void> fetchEmail() async {
-    setState(() {
-      isLoading = true;
-      errorMessage = '';
-    });
-
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
-    if (token == null || token.isEmpty) {
+   Future<void> fetchEmail() async {
+    try {
+      final fetchedEmail = await apiService.getEmail();
       setState(() {
-        errorMessage = 'No token found';
+        email = fetchedEmail;
         isLoading = false;
       });
-      return;
-    }
-
-    try {
-      final response = await http.get(Uri.parse('http://localhost:3307/user'),
-          headers: {'Authorization': 'Bearer $token'});
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        setState(() {
-          email = data['email'];
-          isLoading = false;
-        });
-      } else {
-        final errorData = jsonDecode(response.body);
-        setState(() {
-          errorMessage = 'Failed to load email: ${errorData['message']}';
-          isLoading = false;
-        });
-      }
     } catch (e) {
       setState(() {
-        errorMessage = 'Error: ${e.toString()}';
         isLoading = false;
+        errorMessage = e.toString();
       });
     }
   }

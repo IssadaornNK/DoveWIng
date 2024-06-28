@@ -55,18 +55,27 @@ class ApiService {
     await prefs.remove('token');
   }
 
-   Future<String> fetchEmail() async {
-    final response = await http.get(Uri.parse('$baseUrl/Email'));
-    print(response.body);
+    Future<String> getEmail() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    if (token == null) {
+      throw Exception('Token not found');
+    }
+
+    final response = await http.get(
+      Uri.parse('$baseUrl/user'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
     if (response.statusCode == 200) {
-      List<dynamic> data = json.decode(response.body);
-      if (data.isNotEmpty) {
-        return data[0]['Email'];
-      } else {
-        throw Exception('No email found');
-      }
+      final data = jsonDecode(response.body);
+      return data['email'];
     } else {
-      throw Exception('Failed to load email');
+      final errorData = jsonDecode(response.body);
+      throw Exception(errorData['message'] ?? 'Failed to load email');
     }
   }
 }
