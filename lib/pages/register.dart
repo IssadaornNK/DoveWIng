@@ -1,9 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _RegisterPageState createState() => _RegisterPageState();
 }
 
@@ -98,9 +100,11 @@ class _RegisterPageState extends State<RegisterPage> {
                   onPressed: () {
                     if (_formKey.currentState?.validate() ?? false) {
                       // Handle account creation
-                      print('Username: ${_usernameController.text}');
-                      print('Email: ${_emailController.text}');
-                      print('Password: ${_passwordController.text}');
+                      if (kDebugMode) {
+                        print('Username: ${_usernameController.text}');
+                        print('Email: ${_emailController.text}');
+                        print('Password: ${_passwordController.text}');
+                      }
                       // Navigate to home page
                       Navigator.pushNamed(context, '/home');
                     }

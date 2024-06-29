@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
@@ -91,6 +92,7 @@ class HomePage extends StatelessWidget {
 class CampaignPage extends StatefulWidget {
   const CampaignPage({super.key});
   @override
+  // ignore: library_private_types_in_public_api
   _CampaignPageState createState() => _CampaignPageState();
 }
 
@@ -150,7 +152,9 @@ class _CampaignPageState extends State<CampaignPage> {
                 onPressed: _selectedDonation != null
                     ? () {
                         // Handle submit donation
-                        print('Selected donation: $_selectedDonation');
+                        if (kDebugMode) {
+                          print('Selected donation: $_selectedDonation');
+                        }
                       }
                     : null,
                 style: ElevatedButton.styleFrom(
