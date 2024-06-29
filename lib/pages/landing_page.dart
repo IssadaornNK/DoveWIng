@@ -1,10 +1,4 @@
 import 'package:flutter/material.dart';
-//import 'login.dart';
-
-// void main() {
-//   runApp(DoveWingApp());
-// }
-
 
 class LandingPage extends StatelessWidget {
   const LandingPage({super.key});
@@ -17,12 +11,12 @@ class LandingPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              CircleAvatar(
+              const CircleAvatar(
                 radius: 80,
                 //backgroundImage: AssetImage('assets/dove.png'), // Ensure you have this image in your assets folder
               ),
-              SizedBox(height: 20),
-              Text(
+              const SizedBox(height: 20),
+              const Text(
                 'DoveWing',
                 style: TextStyle(
                   fontSize: 24,
@@ -30,8 +24,8 @@ class LandingPage extends StatelessWidget {
                   color: Colors.white,
                 ),
               ),
-              SizedBox(height: 10),
-              Text(
+              const SizedBox(height: 10),
+              const Text(
                 'Empowering Change.\nTransforming Lives.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -39,7 +33,7 @@ class LandingPage extends StatelessWidget {
                   color: Colors.white,
                 ),
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
                 ElevatedButton(
                 onPressed: () {
                   Navigator.pushNamed(context, '/login');
@@ -47,9 +41,9 @@ class LandingPage extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   // primary: Colors.white, // background color
                   // onPrimary: Colors.blue, // text color
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
                 ),
-                child: Text(
+                child: const Text(
                   'Start',
                   style: TextStyle(
                     fontSize: 18,

@@ -1,4 +1,5 @@
-allprojects {
+allpr
+ojects {
     repositories {
         google()
         mavenCentral()

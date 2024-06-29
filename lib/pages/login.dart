@@ -11,7 +11,7 @@ class LoginPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text(
+              const Text(
                 'DoveWing',
                 style: TextStyle(
                   fontSize: 32,
@@ -19,8 +19,8 @@ class LoginPage extends StatelessWidget {
                   color: Colors.blue,
                 ),
               ),
-              SizedBox(height: 20),
-              Text(
+              const SizedBox(height: 20),
+              const Text(
                 'Hi there!',
                 style: TextStyle(
                   fontSize: 24,
@@ -28,7 +28,7 @@ class LoginPage extends StatelessWidget {
                   color: Colors.blue,
                 ),
               ),
-              Text(
+              const Text(
                 'Let\'s Get Started',
                 style: TextStyle(
                   fontSize: 24,
@@ -36,14 +36,14 @@ class LoginPage extends StatelessWidget {
                   color: Colors.blue,
                 ),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 40),
+                padding: const EdgeInsets.symmetric(horizontal: 40),
                 child: Column(
                   children: <Widget>[
                     TextField(
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.person),
+                        prefixIcon: const Icon(Icons.person),
                         hintText: 'Username',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -52,11 +52,11 @@ class LoginPage extends StatelessWidget {
                         fillColor: Colors.white,
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     TextField(
                       obscureText: true,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.lock),
+                        prefixIcon: const Icon(Icons.lock),
                         hintText: 'Password',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -65,7 +65,7 @@ class LoginPage extends StatelessWidget {
                         fillColor: Colors.white,
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
                         Navigator.pushNamed(context, '/home');
@@ -74,22 +74,22 @@ class LoginPage extends StatelessWidget {
                         // primary: Colors.blue,
                         // onPrimary: Colors.white,
                         padding:
-                            EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                            const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Log in',
                         style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
                     ),
-                    SizedBox(height: 20),
-                    Row(
+                    const SizedBox(height: 20),
+                    const Row(
                       children: <Widget>[
                         Expanded(child: Divider(color: Colors.blue)),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          padding: EdgeInsets.symmetric(horizontal: 10),
                           child: Text(
                             'Or',
                             style: TextStyle(color: Colors.blue),
@@ -98,20 +98,20 @@ class LoginPage extends StatelessWidget {
                         Expanded(child: Divider(color: Colors.blue)),
                       ],
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     OutlinedButton(
                       onPressed: () {
                         Navigator.pushNamed(context, '/register');
                       },
                       style: OutlinedButton.styleFrom(
                         padding:
-                            EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                        side: BorderSide(color: Colors.blue),
+                            const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                        side: const BorderSide(color: Colors.blue),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Create account',
                         style: TextStyle(fontSize: 18, color: Colors.blue),
                       ),
