@@ -85,7 +85,7 @@ class _RegisterPageState extends State<RegisterPage> {
               // First Name Input
               TextFormField(
                 decoration: const InputDecoration(
-                  labelText: 'First Name',
+                  labelText: 'Username',
                   labelStyle:
                       TextStyle(color: Color.fromARGB(255, 5, 119, 208)),
                   filled: true,
@@ -110,7 +110,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your first name';
+                    return 'Please enter your username';
                   }
                   return null;
                 },
