@@ -1,188 +1,186 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          'DoveWing',
+          style: TextStyle(color: Colors.blue, fontSize: 24),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person, color: Colors.blue),
+            onPressed: () {
+              // Handle profile icon press
+            },
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Campaign for today',
+                style: TextStyle(fontSize: 20, color: Colors.blue, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              _buildCampaignCard(context),
+              const SizedBox(height: 10),
+              _buildCampaignCard(context),
+              const SizedBox(height: 10),
+              _buildCampaignCard(context),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCampaignCard(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, '/campaign');
+      },
+      child: Container(
+        padding: const EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Colors.blue),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: 150,
+              color: Colors.grey[300],
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              'Campaign name',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue),
+            ),
+            const SizedBox(height: 5),
+            const Text(
+              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut',
+              style: TextStyle(fontSize: 14),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class CampaignPage extends StatefulWidget {
+  const CampaignPage({super.key});
+  @override
+  _CampaignPageState createState() => _CampaignPageState();
+}
+
+class _CampaignPageState extends State<CampaignPage> {
+  String? _selectedDonation;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false, // Removes the back arrow
-        centerTitle: true, // Centers the title
-        title: Text(
-          'DoveWing',
-          style: GoogleFonts.inika(
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
-            color: const Color.fromARGB(255, 5, 119, 208),
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.person_outline, color: Color.fromARGB(255, 5, 119, 208)),
-            onPressed: () {
-              Navigator.pushNamed(context, '/profile');
-              // Handle profile icon tap
-            },
-          ),
-        ],
         backgroundColor: Colors.white,
         elevation: 0,
-        bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(4.0),
-          child: Divider(
-            color: Color.fromARGB(255, 5, 119, 208),
-            height: 1.0,
-            thickness: 1.0,
-          ),
+        iconTheme: const IconThemeData(color: Colors.blue),
+        title: const Text(
+          'Campaign Details',
+          style: TextStyle(color: Colors.blue),
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
-            // Campaign progress section
-            Text(
-              'Your campaign progress',
-              style: GoogleFonts.inika(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: const Color.fromARGB(255, 5, 119, 208),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: 200,
+                color: Colors.grey[300],
               ),
-            ),
-            const SizedBox(height: 16),
-            // Campaign progress box
-            GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, '/payment');
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: const Color.fromARGB(255, 5, 119, 208)),
-                ),
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Image.network(
-                      'https://via.placeholder.com/150',
-                      height: 100,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Campaign Name',
-                      style: GoogleFonts.inika(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Colors.black,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'This is a description of the campaign. It gives details about the campaign progress and goals.',
-                      style: GoogleFonts.inika(
-                        fontSize: 14,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
+              const SizedBox(height: 20),
+              const Text(
+                'Campaign name',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue),
               ),
-            ),
-            const SizedBox(height: 8),
-            Align(
-              alignment: Alignment.centerRight,
-              child: GestureDetector(
-                onTap: () {
-                  // Handle "See more" tap
-                },
-                child: Text(
-                  'See more',
-                  style: GoogleFonts.inika(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: const Color.fromARGB(255, 5, 119, 208),
-                    decoration: TextDecoration.underline,
+              const SizedBox(height: 10),
+              const Text(
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+                style: TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Donate',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blue),
+              ),
+              const SizedBox(height: 10),
+              _buildDonationOption('One-time donation: \$2.59', 'one-time'),
+              const SizedBox(height: 10),
+              _buildDonationOption('Continuous donation: \$0.49/month', 'continuous'),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _selectedDonation != null
+                    ? () {
+                        // Handle submit donation
+                        print('Selected donation: $_selectedDonation');
+                        Navigator.pushNamed(context, '/payment_method');
+                      }
+                    : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            // Campaign for today section
-            Text(
-              'Campaign for today',
-              style: GoogleFonts.inika(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: const Color.fromARGB(255, 5, 119, 208),
-              ),
-            ),
-            const SizedBox(height: 16),
-            // Campaign for today box
-            GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, '/payment');
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: const Color.fromARGB(255, 5, 119, 208)),
-                ),
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Image.network(
-                      'https://via.placeholder.com/150',
-                      height: 100,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Today\'s Campaign Name',
-                      style: GoogleFonts.inika(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Colors.black,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'This is a description of today\'s campaign. It highlights what is planned for the day.',
-                      style: GoogleFonts.inika(
-                        fontSize: 14,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
+                child: const Text(
+                  'Submit',
+                  style: TextStyle(fontSize: 18),
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
-            // List of other campaigns
-            Text(
-              'Other Campaigns',
-              style: GoogleFonts.inika(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: const Color.fromARGB(255, 5, 119, 208),
-              ),
-            ),
-            const SizedBox(height: 16),
-            ListTile(
-              title: const Text('Campaign 1'),
-              onTap: () {
-                Navigator.pushNamed(context, '/payment');
-              },
-            ),
-            // Add more campaign list items here
-          ],
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildDonationOption(String text, String value) {
+    return Container(
+      padding: const EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        color: Colors.blue[50],
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.blue),
+      ),
+      child: RadioListTile<String>(
+        title: Text(
+          text,
+          style: const TextStyle(fontSize: 16, color: Colors.blue),
+        ),
+        value: value,
+        groupValue: _selectedDonation,
+        onChanged: (String? newValue) {
+          setState(() {
+            _selectedDonation = newValue;
+          });
+        },
       ),
     );
   }

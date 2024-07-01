@@ -125,7 +125,7 @@ class _LoginPageState extends State<LoginPage> {
                       // Username TextField
                       TextFormField(
                         decoration: const InputDecoration(
-                          labelText: 'Username',
+                          labelText: 'Email',
                           labelStyle: TextStyle(
                               color: Color.fromARGB(255, 5, 119, 208)),
                           filled: true,

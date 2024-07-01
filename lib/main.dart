@@ -49,6 +49,7 @@ class DovewingApp extends StatelessWidget {
         '/payment_method': (context) => const payment_method_page.PaymentMethodPage(),
         '/payment_success': (context) => const PaymentSuccessPage(),
         '/profile': (context) => const ProfilePage(),
+        '/campaign': (context) => const CampaignPage(),
       },
     );
   }

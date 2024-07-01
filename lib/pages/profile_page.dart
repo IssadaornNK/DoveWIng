@@ -9,13 +9,14 @@ import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
 
 class ProfilePage extends StatelessWidget {
-  final String username = 'User123'; // Example username
-  final String profilePictureUrl = 'https://via.placeholder.com/150'; // Example profile picture URL
-  final List<Map<String, dynamic>> pastDonations = [
+  const ProfilePage({super.key}) : pastDonations = const [
     {'date': '2023-01-01', 'amount': '\$2.59', 'type': 'One-time'},
     {'date': '2023-02-01', 'amount': '\$0.49', 'type': 'Monthly'},
     {'date': '2023-03-01', 'amount': '\$0.49', 'type': 'Monthly'},
-  ]; // Example past donations
+  ]; // Example past donations;
+  final String username = 'User123'; // Example username
+  final String profilePictureUrl = 'https://via.placeholder.com/150'; // Example profile picture URL
+  final List<Map<String, dynamic>> pastDonations;
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +66,36 @@ class ProfilePage extends StatelessWidget {
                 },
               ),
             ),
+            Center(
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(
+                          255, 5, 119, 208), // background color
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    onPressed: () async {
+                      Navigator.pushNamed(context, '/login');
+                    },
+                    child: Text(
+                      'Logout',
+                      style: GoogleFonts.inika(
+                        textStyle: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
