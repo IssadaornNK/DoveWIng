@@ -1,7 +1,31 @@
+import 'dart:convert';
+
+import 'package:dove_wings/server/models/campaign.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  HomePage({super.key});
+  final List<Campaign> campaigns = [
+    Campaign(
+      title: 'StopTrashPlant',
+      description:
+          '#StopTrashPlant- Do not waste life, become a Organ donor. The organs recreated in this Print Advertisement is to spread the awareness of Donate Organ, To celebrate the upcoming National Organ Donation Day, Fundación Argentina de Trasplante and advertising agency DDB joined efforts to come up with a campaign that took place on the streets of Buenos Aires. The campaign had two main objectives: to raise awareness about organ donation and to let people express their willingness to become organ donors.',
+      imageUrl: 'images/campaigns/campaign1.jpg',
+    ),
+    Campaign(
+      title: 'People at Work',
+      description:
+          'Paving the Way for Gender Equality in Construction: A Groundbreaking Initiative ‘People at Work’ by Publicis Brazil and the Women in Construction Institute. In a bid to catalyze a transformative shift in the construction industry, Publicis Brazil, in collaboration with the Women in Construction Institute, has launched a groundbreaking initiative ‘People at Work’ on this year’s International Women’s Day. With women accounting for just one in ten construction workers, there’s a pressing need to address the gender disparities entrenched within this historically male-dominated sector. This article delves into the initiative’s objectives, impact, and how you can contribute to fostering a more inclusive work environment in construction.',
+      imageUrl: 'images/campaigns/campaign2.jpg',
+    ),
+    Campaign(
+      title: 'Land of the Unfree',
+      description:
+          "'Land of the Unfree' On June 24th, 2022 the United States Supreme Court ruled to end protections to the right to abortion. This means that now individual states across the USA regulate the right to abortion. Abortion is now totally or near-totally banned in 26 states in the USA — more than half of the country — with more poised to enact restrictions or bans on the right to abortion.",
+      imageUrl: 'images/campaigns/campaign3.jpg',
+    ),
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,6 +41,7 @@ class HomePage extends StatelessWidget {
             icon: const Icon(Icons.person, color: Colors.blue),
             onPressed: () {
               // Handle profile icon press
+              Navigator.pushNamed(context, '/profile');
             },
           ),
         ],
@@ -29,14 +54,26 @@ class HomePage extends StatelessWidget {
             children: [
               const Text(
                 'Campaign for today',
-                style: TextStyle(fontSize: 20, color: Colors.blue, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.blue,
+                    fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
-              _buildCampaignCard(context),
+              _buildCampaignCard(context,
+                  imagePath: campaigns[0].imageUrl,
+                  campaignName: campaigns[0].title,
+                  campaignDetails: campaigns[0].description),
               const SizedBox(height: 10),
-              _buildCampaignCard(context),
+              _buildCampaignCard(context,
+                  imagePath: campaigns[1].imageUrl,
+                  campaignName: campaigns[1].title,
+                  campaignDetails: campaigns[1].description),
               const SizedBox(height: 10),
-              _buildCampaignCard(context),
+              _buildCampaignCard(context,
+                  imagePath: campaigns[2].imageUrl,
+                  campaignName: campaigns[2].title,
+                  campaignDetails: campaigns[2].description),
             ],
           ),
         ),
@@ -44,10 +81,15 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildCampaignCard(BuildContext context) {
+  Widget _buildCampaignCard(BuildContext context,
+      {String? imagePath, String? campaignName, String? campaignDetails}) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, '/campaign');
+        Navigator.pushNamed(context, '/campaign',
+            arguments: Campaign(
+                title: campaignName,
+                description: campaignDetails,
+                imageUrl: imagePath ?? ''));
       },
       child: Container(
         padding: const EdgeInsets.all(8.0),
@@ -61,17 +103,35 @@ class HomePage extends StatelessWidget {
           children: [
             Container(
               height: 150,
-              color: Colors.grey[300],
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: imagePath != null
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.asset(
+                        imagePath,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                      ),
+                    )
+                  : const Center(
+                      child: Text('No Image',
+                          style: TextStyle(color: Colors.white))),
             ),
             const SizedBox(height: 10),
-            const Text(
-              'Campaign name',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue),
+            Text(
+              campaignName!,
+              style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue),
             ),
             const SizedBox(height: 5),
-            const Text(
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut',
-              style: TextStyle(fontSize: 14),
+            Text(
+              campaignDetails!,
+              style: const TextStyle(fontSize: 14),
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
             ),
@@ -89,10 +149,15 @@ class CampaignPage extends StatefulWidget {
 }
 
 class _CampaignPageState extends State<CampaignPage> {
-  String? _selectedDonation;
+  String? _selectedDonationName;
+  String? _selectedDonationType;
+  double? _selectedDonationAmount;
 
   @override
   Widget build(BuildContext context) {
+    final Campaign campaign =
+        ModalRoute.of(context)!.settings.arguments as Campaign;
+    final double deviceWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -110,41 +175,98 @@ class _CampaignPageState extends State<CampaignPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                height: 200,
-                color: Colors.grey[300],
+                width: deviceWidth,
+                height: deviceWidth * 0.56,  // Maintain 16:9 aspect ratio
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: campaign.imageUrl != null
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.asset(
+                          campaign.imageUrl,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: double.infinity,
+                        ),
+                      )
+                    : const Center(
+                        child: Text('No Image',
+                            style: TextStyle(color: Colors.white))),
               ),
               const SizedBox(height: 20),
-              const Text(
-                'Campaign name',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue),
+              Text(
+                campaign.title,
+                style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue),
               ),
               const SizedBox(height: 10),
-              const Text(
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-                style: TextStyle(fontSize: 16),
+              Text(
+                campaign.description,
+                style: const TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 20),
               const Text(
                 'Donate',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blue),
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue),
               ),
               const SizedBox(height: 10),
-              _buildDonationOption('One-time donation: \$2.59', 'one-time'),
+              _buildDonationOption(
+                  'One-time donation: \$2.59', campaign.title , 'one-time', 2.59),
               const SizedBox(height: 10),
-              _buildDonationOption('Continuous donation: \$0.49/month', 'continuous'),
+              _buildDonationOption(
+                  'Continuous donation: \$0.49/month', campaign.title, 'continuous', 0.49),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: _selectedDonation != null
-                    ? () {
-                        // Handle submit donation
-                        print('Selected donation: $_selectedDonation');
-                        Navigator.pushNamed(context, '/payment_method');
+                onPressed: _selectedDonationName != null &&
+                        _selectedDonationType != null &&
+                        _selectedDonationAmount != null
+                    ? () async {
+                        // Prepare donation data
+                        final donationData = {
+                          'name': _selectedDonationName,
+                          'amount': _selectedDonationAmount,
+                          'type': _selectedDonationType,
+                        };
+
+                        // Make POST request to server
+                        final response = await post(
+                          Uri.parse('http://localhost:3307/donations'),
+                          body: jsonEncode(donationData),
+                          headers: {'Content-Type': 'application/json'},
+                        );
+
+                        if (response.statusCode == 200) {
+                          // Donation successful
+                          print('Donation submitted successfully!');
+                          // Show success message or navigate to confirmation screen (replace with your logic)
+                          Navigator.pushNamed(context,
+                              '/payment_method'); // Can be used for future payment flow
+                        } else {
+                          // Donation failed
+                          print(
+                              'Error submitting donation: ${response.statusCode}');
+                          // Show error message to user (replace with your error handling)
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content:
+                                  Text('Error donating. Please try again.'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
                       }
                     : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -161,7 +283,7 @@ class _CampaignPageState extends State<CampaignPage> {
     );
   }
 
-  Widget _buildDonationOption(String text, String value) {
+  Widget _buildDonationOption(String text, String name, String type, double amount) {
     return Container(
       padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
@@ -174,11 +296,13 @@ class _CampaignPageState extends State<CampaignPage> {
           text,
           style: const TextStyle(fontSize: 16, color: Colors.blue),
         ),
-        value: value,
-        groupValue: _selectedDonation,
+        value: type,
+        groupValue: _selectedDonationType,
         onChanged: (String? newValue) {
           setState(() {
-            _selectedDonation = newValue;
+            _selectedDonationName = name;
+            _selectedDonationType = newValue;
+            _selectedDonationAmount = amount;
           });
         },
       ),

@@ -1,18 +1,23 @@
+buildscript {
+    ext.kotlin_version = '1.8' // Use a stable version
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.codehaus.groovy:groovy-all:3.0.22"
+        classpath 'com.android.tools.build:gradle:7.0.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20"
+    }
+}
+
+dependencies {
+    implementation "org.codehaus.groovy:groovy-all:3.0.22"
+}
+
 allprojects {
     repositories {
         google()
         mavenCentral()
     }
-}
-
-rootProject.buildDir = "../build"
-subprojects {
-    project.buildDir = "${rootProject.buildDir}/${project.name}"
-}
-subprojects {
-    project.evaluationDependsOn(":app")
-}
-
-tasks.register("clean", Delete) {
-    delete rootProject.buildDir
 }

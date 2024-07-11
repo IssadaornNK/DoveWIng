@@ -1,151 +1,297 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class PaymentMethodPage extends StatelessWidget {
-  const PaymentMethodPage({super. key});
+class PaymentMethodPage extends StatefulWidget {
+  const PaymentMethodPage({super.key});
+
+  @override
+  State<PaymentMethodPage> createState() => _PaymentMethodPageState();
+}
+
+class _PaymentMethodPageState extends State<PaymentMethodPage> {
+  final _formKey = GlobalKey<FormState>();
+  final _cardNumberController = TextEditingController();
+  final _expiryDateController = TextEditingController();
+  final _cvvController = TextEditingController();
+  String selectedValue = 'Visa Card'; // Default value
+
+  @override
+  void dispose() {
+    _cardNumberController.dispose();
+    _expiryDateController.dispose();
+    _cvvController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _selectExpiryDate(BuildContext context) async {
+    final currentYear = DateTime.now().year;
+    final currentMonth = DateTime.now().month;
+
+    final DateTime? selectedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime(currentYear, currentMonth),
+      firstDate: DateTime(currentYear, currentMonth),
+      lastDate: DateTime(currentYear + 10),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: const Color.fromARGB(255, 5, 119, 208),
+            hintColor: const Color.fromARGB(255, 5, 119, 208),
+            buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.primary),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (selectedDate != null) {
+      final formattedDate = '${selectedDate.month.toString().padLeft(2, '0')}/${selectedDate.year.toString().substring(2)}';
+      setState(() {
+        _expiryDateController.text = formattedDate;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          color: const Color.fromARGB(255, 5, 119, 208),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: Text(
-          'DoveWing',
-          style: GoogleFonts.inika(
-            textStyle: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Color.fromARGB(255, 5, 119, 208),
-            ),
+    return Form(
+      key: _formKey,
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            color: const Color.fromARGB(255, 5, 119, 208),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        iconTheme: const IconThemeData(
-          color: Color.fromARGB(255, 5, 119, 208),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 20),
-            Text(
-              'Payment Method',
-              style: GoogleFonts.inika(
-                textStyle: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 5, 119, 208),
-                ),
+          title: Text(
+            'DoveWing',
+            style: GoogleFonts.inika(
+              textStyle: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Color.fromARGB(255, 5, 119, 208),
               ),
             ),
-            const SizedBox(height: 20),
-          const  PaymentOption(
-              label: 'Visa Card',
-              value: 'visa',
-              icon: Icons.credit_card,
-              options: [
-                'Option 1',
-                'Option 2',
-                'Option 3',
-              ],
-            ),
-            const SizedBox(height: 20),
-            Center(
-              child: Text(
-                'Pay securely with your bank account using Visa or MasterCard',
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.white,
+          iconTheme: const IconThemeData(
+            color: Color.fromARGB(255, 5, 119, 208),
+          ),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 20),
+              Text(
+                'Payment Method',
                 style: GoogleFonts.inika(
                   textStyle: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color:  Color.fromARGB(255, 5, 119, 208),
+                    color: Color.fromARGB(255, 5, 119, 208),
                   ),
                 ),
                 textAlign: TextAlign.center,
               ),
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'Card Number',
-                labelStyle: GoogleFonts.inika(),
-                border: const OutlineInputBorder(),
+              const SizedBox(height: 20),
+              PaymentOption(
+                label: selectedValue,
+                value: selectedValue,
+                icon: Icons.credit_card,
+                options: [
+                  selectedValue == 'Visa Card' ? 'Master Card' : 'Visa Card'
+                ],
+                onSelected: (value) {
+                  setState(() {
+                    selectedValue = value;
+                  });
+                },
               ),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'Name on Card',
-                labelStyle: GoogleFonts.inika(),
-                border: const OutlineInputBorder(),
+              const SizedBox(height: 20),
+              Center(
+                child: Text(
+                  'Pay securely with your bank account using Visa or Master Card',
+                  style: GoogleFonts.inika(
+                    textStyle: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 5, 119, 208),
+                    ),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               ),
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _cardNumberController,
+                decoration: InputDecoration(
+                  labelText: 'Card Number',
+                  labelStyle: GoogleFonts.inika(),
+                  border: const OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  CardNumberInputFormatter(),
+                ],
+                maxLength: 19, // Allow space-separated 16 digits + spaces (4 groups of 4)
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your card number';
+                  }
+                  final cleanedValue = value.replaceAll(' ', '');
+                  if (!RegExp(r'^\d{16}$').hasMatch(cleanedValue)) {
+                    return 'Card number must be 16 digits';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 10),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Name on Card',
+                  labelStyle: GoogleFonts.inika(),
+                  border: const OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your name on card';
+                  }
+                  if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
+                    return 'Name can only contain letters and spaces';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 10),
+              GestureDetector(
+                onTap: () => _selectExpiryDate(context),
+                child: AbsorbPointer(
+                  child: TextFormField(
+                    controller: _expiryDateController,
                     decoration: InputDecoration(
                       labelText: 'Expiry Date',
                       labelStyle: GoogleFonts.inika(),
                       border: const OutlineInputBorder(),
                     ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your expiry date';
+                      }
+                      if (!RegExp(r'^(0[1-9]|1[0-2])\/\d{2}$').hasMatch(value)) {
+                        return 'Expiry date must be in the format MM/YY';
+                      }
+                      return null;
+                    },
                   ),
                 ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      labelText: 'CVV',
-                      labelStyle: GoogleFonts.inika(),
-                      border: const OutlineInputBorder(),
-                    ),
-                  ),
+              ),
+              const SizedBox(height: 10),
+              TextFormField(
+                controller: _cvvController,
+                decoration: InputDecoration(
+                  labelText: 'CVV',
+                  labelStyle: GoogleFonts.inika(),
+                  border: const OutlineInputBorder(),
                 ),
-              ],
-            ),
-            const Spacer(),
-            Center(
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 5, 119, 208),
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  CvvInputFormatter(),
+                ],
+                maxLength: 3, // Allow only 3 digits
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your CVV';
+                  }
+                  if (!RegExp(r'^\d{3}$').hasMatch(value)) {
+                    return 'CVV must be 3 digits';
+                  }
+                  return null;
+                },
+              ),
+              const Spacer(),
+              Center(
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 5, 119, 208),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
-                  ),
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/payment_success');
-                  },
-                  child: Text(
-                    'Donate',
-                    style: GoogleFonts.inika(
-                      textStyle: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+                        Navigator.pushNamed(context, '/payment_success');
+                      }
+                    },
+                    child: Text(
+                      'Donate',
+                      style: GoogleFonts.inika(
+                        textStyle: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-          ],
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );
+  }
+}
+
+class CardNumberInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    final newString = newValue.text.replaceAll(' ', '');
+    if (newString.length > 16) {
+      // limit to 16 digits
+      return oldValue;
+    }
+
+    String formattedString = '';
+    
+    for (int i = 0; i < newString.length; i++) {
+      if (i > 0 && i % 4 == 0) {
+        formattedString += ' ';
+      }
+      formattedString += newString[i];
+    }
+    
+    return newValue.copyWith(
+      text: formattedString,
+      selection: TextSelection.collapsed(offset: formattedString.length),
+    );
+  }
+}
+
+class CvvInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    final newString = newValue.text.replaceAll(' ', '');
+    if (newString.length > 3) {
+      // limit to 3 digits
+      return oldValue;
+    }
+    return newValue;
   }
 }
 
@@ -154,21 +300,22 @@ class PaymentOption extends StatefulWidget {
   final String value;
   final IconData icon;
   final List<String> options;
+  final ValueChanged<String> onSelected;
 
- const PaymentOption({
+  const PaymentOption({
     required this.label,
     required this.value,
     required this.icon,
     required this.options,
-    super.key,
-  });
+    required this.onSelected,
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<PaymentOption> createState() => _PaymentOptionState();
 }
 
 class _PaymentOptionState extends State<PaymentOption> {
-  String? selectedValue;
   bool isExpanded = false;
 
   @override
@@ -184,7 +331,7 @@ class _PaymentOptionState extends State<PaymentOption> {
           child: Container(
             decoration: BoxDecoration(
               border: Border.all(
-                color: selectedValue == widget.value
+                color: widget.value == widget.label
                     ? const Color.fromARGB(255, 5, 119, 208)
                     : Colors.grey,
               ),
@@ -194,11 +341,11 @@ class _PaymentOptionState extends State<PaymentOption> {
             child: Row(
               children: [
                 Radio<String>(
-                  value: widget.value,
-                  groupValue: selectedValue,
+                  value: widget.label,
+                  groupValue: widget.value,
                   onChanged: (value) {
                     setState(() {
-                      selectedValue = value;
+                      widget.onSelected(value!);
                     });
                   },
                   activeColor: const Color.fromARGB(255, 5, 119, 208),
@@ -214,7 +361,7 @@ class _PaymentOptionState extends State<PaymentOption> {
                     textStyle: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color:  Color.fromARGB(255, 5, 119, 208),
+                      color: Color.fromARGB(255, 5, 119, 208),
                     ),
                   ),
                 ),
@@ -241,15 +388,19 @@ class _PaymentOptionState extends State<PaymentOption> {
                           textStyle: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color:  Color.fromARGB(255, 5, 119, 208),
+                            color: Color.fromARGB(255, 5, 119, 208),
                           ),
                         ),
                       ),
                       onTap: () {
                         // Perform action when an option is tapped
-                       if (kDebugMode) {
-                         print('Option selected: $option');
-                       }
+                        if (kDebugMode) {
+                          print('Option selected: $option');
+                        }
+                        widget.onSelected(option);
+                        setState(() {
+                          isExpanded = false;
+                        });
                       },
                     ),
                   )
