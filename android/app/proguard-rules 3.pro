@@ -1,0 +1,2 @@
+-keep class com.example.dove_wings.** { *; }
+-dontwarn com.example.dove_wings.**
