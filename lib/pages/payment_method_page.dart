@@ -308,8 +308,8 @@ class PaymentOption extends StatefulWidget {
     required this.icon,
     required this.options,
     required this.onSelected,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<PaymentOption> createState() => _PaymentOptionState();

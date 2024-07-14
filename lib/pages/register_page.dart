@@ -16,7 +16,7 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
 
-  String _firstName = '';
+  String _username = '';
   String _email = '';
   String _password = '';
   bool _isChecked = false;
@@ -31,7 +31,7 @@ class _RegisterPageState extends State<RegisterPage> {
         // Handle form submission
         if (kDebugMode) {
           print('Form Submitted');
-          print('First Name: $_firstName');
+          print('Username: $_username');
           print('Email: $_email');
           print('Password: $_password');
         }
@@ -41,7 +41,7 @@ class _RegisterPageState extends State<RegisterPage> {
             'Content-Type': 'application/json; charset=UTF-8',
           },
           body: jsonEncode(<String, String>{
-            'FirstName': _firstName,
+            'Username': _username,
             'Email': _email,
             'Password': _password,
           }),
@@ -115,7 +115,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   return null;
                 },
                 onSaved: (value) {
-                  _firstName = value!;
+                  _username = value!;
                 },
               ),
               const SizedBox(height: 30),

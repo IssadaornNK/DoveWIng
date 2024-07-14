@@ -31,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
       }
 
       final response = await http.post(
-        Uri.parse('http://localhost:3307/login'),
+        Uri.parse('http://localhost:3307/api/auth/Login'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

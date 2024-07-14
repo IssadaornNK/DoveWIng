@@ -1,4 +1,7 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:dove_wings/server/models/campaign.dart';
 import 'package:flutter/material.dart';
@@ -175,25 +178,20 @@ class _CampaignPageState extends State<CampaignPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: deviceWidth,
-                height: deviceWidth * 0.56,  // Maintain 16:9 aspect ratio
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: campaign.imageUrl != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.asset(
-                          campaign.imageUrl,
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                          height: double.infinity,
-                        ),
-                      )
-                    : const Center(
-                        child: Text('No Image',
-                            style: TextStyle(color: Colors.white))),
-              ),
+                  width: deviceWidth,
+                  height: deviceWidth * 0.56, // Maintain 16:9 aspect ratio
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.asset(
+                      campaign.imageUrl,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                    ),
+                  )),
               const SizedBox(height: 20),
               Text(
                 campaign.title,
@@ -216,11 +214,11 @@ class _CampaignPageState extends State<CampaignPage> {
                     color: Colors.blue),
               ),
               const SizedBox(height: 10),
-              _buildDonationOption(
-                  'One-time donation: \$2.59', campaign.title , 'one-time', 2.59),
+              _buildDonationOption('One-time donation: \$2.59', campaign.title,
+                  'one-time', 2.59),
               const SizedBox(height: 10),
-              _buildDonationOption(
-                  'Continuous donation: \$0.49/month', campaign.title, 'continuous', 0.49),
+              _buildDonationOption('Continuous donation: \$0.49/month',
+                  campaign.title, 'continuous', 0.49),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _selectedDonationName != null &&
@@ -234,6 +232,9 @@ class _CampaignPageState extends State<CampaignPage> {
                           'type': _selectedDonationType,
                         };
 
+                        // Capture the context before the asynchronous operation
+                        final currentContext = context;
+
                         // Make POST request to server
                         final response = await post(
                           Uri.parse('http://localhost:3307/donations'),
@@ -243,22 +244,25 @@ class _CampaignPageState extends State<CampaignPage> {
 
                         if (response.statusCode == 200) {
                           // Donation successful
-                          print('Donation submitted successfully!');
+                          log('Donation submitted successfully!');
                           // Show success message or navigate to confirmation screen (replace with your logic)
-                          Navigator.pushNamed(context,
-                              '/payment_method'); // Can be used for future payment flow
+                          if (currentContext.mounted) {
+                            Navigator.pushNamed(currentContext,
+                                '/payment_method'); // Can be used for future payment flow
+                          }
                         } else {
                           // Donation failed
-                          print(
-                              'Error submitting donation: ${response.statusCode}');
+                          log('Error submitting donation: ${response.statusCode}');
                           // Show error message to user (replace with your error handling)
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content:
-                                  Text('Error donating. Please try again.'),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
+                          if (currentContext.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content:
+                                    Text('Error donating. Please try again.'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
                         }
                       }
                     : null,
@@ -283,7 +287,8 @@ class _CampaignPageState extends State<CampaignPage> {
     );
   }
 
-  Widget _buildDonationOption(String text, String name, String type, double amount) {
+  Widget _buildDonationOption(
+      String text, String name, String type, double amount) {
     return Container(
       padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(

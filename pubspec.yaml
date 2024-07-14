@@ -30,6 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  image_picker: ^0.8.7+5
   google_fonts: ^6.2.1
   mysql_client: ^0.0.27
   http: ^1.2.0
