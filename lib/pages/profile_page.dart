@@ -2,11 +2,14 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -21,6 +24,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String errorMessage = '';
   bool isLoading = true;
   List<Map<String, dynamic>> pastDonations = [];
+  String profileImageUrl = '';
 
   @override
   void initState() {
@@ -80,6 +84,8 @@ class _ProfilePageState extends State<ProfilePage> {
         setState(() {
           username = userData['username'];
           pastDonations = formattedDonations;
+          profileImageUrl =
+              userData['profileImageUrl'] ?? 'images/profile/user.jpg';
           isLoading = false;
         });
       } else {
@@ -94,6 +100,46 @@ class _ProfilePageState extends State<ProfilePage> {
         errorMessage = 'Error: ${e.toString()}';
         isLoading = false;
       });
+    }
+  }
+
+  Future<void> uploadImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile == null) return;
+
+    final file = File(pickedFile.path);
+    final fileName = pickedFile.name;
+    final storageRef =
+        FirebaseStorage.instance.ref().child('profile_images/$fileName');
+
+    try {
+      await storageRef.putFile(file);
+      final downloadUrl = await storageRef.getDownloadURL();
+
+      setState(() {
+        profileImageUrl = downloadUrl;
+      });
+
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
+      if (token != null) {
+        final response = await http.put(
+          Uri.parse('http://localhost:3307/user/profile-image'),
+          headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': 'Bearer $token'},
+          body: jsonEncode({'profileImageUrl': downloadUrl}),
+        );
+        if (response.statusCode == 200) {
+          log('Profile image updated successfully');
+        } else {
+          log('Failed to update profile image: ${response.body}');
+        }
+      }
+    } catch (e) {
+      log('Failed to upload image: $e');
     }
   }
 
@@ -127,10 +173,22 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Center(
-                child: CircleAvatar(
-                  radius: 50,
-                  backgroundImage: NetworkImage('images/profile/loligirl.png'),
+              Center(
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundImage: profileImageUrl.isNotEmpty
+                          ? NetworkImage(profileImageUrl)
+                          : const AssetImage('images/profile/loligirl.png')
+                              as ImageProvider,
+                    ),
+                    Positioned(
+                        child: IconButton(
+                      icon: const Icon(Icons.camera_alt, color: Colors.blue),
+                      onPressed: uploadImage,
+                    ))
+                  ],
                 ),
               ),
               const SizedBox(height: 16),

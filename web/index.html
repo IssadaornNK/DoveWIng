@@ -28,7 +28,7 @@
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="icon" type="image/jpg" href="../images/dovewingicon.jpg"/>
 
   <title>dove_wings</title>
   <link rel="manifest" href="manifest.json">
@@ -61,5 +61,24 @@
       });
     });
   </script>
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-storage.js"></script>
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyDh2tuUoiTrHxlXqMq8cszdZ8OyPlgrT6U",
+    authDomain: "dovewing-a55c5.firebaseapp.com",
+    projectId: "dovewing-a55c5",
+    storageBucket: "dovewing-a55c5.appspot.com",
+    messagingSenderId: "523363027388",
+    appId: "1:523363027388:web:3c46eaf192c035377803b9",
+    measurementId: "G-B1J034M4SV"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+</script>
 </body>
 </html>

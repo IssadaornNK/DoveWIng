@@ -1,3 +1,5 @@
+import 'package:dove_wings/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'pages/landing_page.dart';
@@ -10,7 +12,11 @@ import 'pages/payment_method_page.dart' as payment_method_page;
 import 'pages/payment_success_page.dart';
 import 'pages/profile_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const DovewingApp());
 }
 
@@ -38,6 +44,7 @@ class DovewingApp extends StatelessWidget {
           ),
         ),
       ),
+      home: HomePage(),
       initialRoute: '/',
       routes: {
         '/': (context) => const LandingPage(),
