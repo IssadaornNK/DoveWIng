@@ -6,6 +6,13 @@ import 'dart:developer';
 import 'package:dove_wings/server/models/campaign.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+// Function to get the token from secure storage
+Future<String?> getToken() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString('token');
+}
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -236,29 +243,51 @@ class _CampaignPageState extends State<CampaignPage> {
                         final currentContext = context;
 
                         // Make POST request to server
-                        final response = await post(
-                          Uri.parse('http://localhost:3307/donations'),
-                          body: jsonEncode(donationData),
-                          headers: {'Content-Type': 'application/json'},
-                        );
-
-                        if (response.statusCode == 200) {
-                          // Donation successful
-                          log('Donation submitted successfully!');
-                          // Show success message or navigate to confirmation screen (replace with your logic)
-                          if (currentContext.mounted) {
-                            Navigator.pushNamed(currentContext,
-                                '/payment_method'); // Can be used for future payment flow
+                        final token = await getToken();
+                        if (token != null) {
+                          final response = await post(
+                            Uri.parse('http://localhost:3307/donations'),
+                            body: jsonEncode(donationData),
+                            headers: {
+                              'Content-Type': 'application/json',
+                              'Authorization': 'Bearer $token'
+                            },
+                          );
+                          if (response.statusCode == 200) {
+                            // Donation successful
+                            log('Donation submitted successfully!');
+                            // Show success message or navigate to confirmation screen (replace with your logic)
+                            if (currentContext.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Donation submitted.'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                              Navigator.pushNamed(currentContext,
+                                  '/payment_method'); // Can be used for future payment flow
+                            }
+                          } else {
+                            // Donation failed
+                            log('Error submitting donation: ${response.statusCode}');
+                            // Show error message to user (replace with your error handling)
+                            if (currentContext.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content:
+                                      Text('Error donating. Please try again.'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
                           }
                         } else {
-                          // Donation failed
-                          log('Error submitting donation: ${response.statusCode}');
-                          // Show error message to user (replace with your error handling)
+                          log('Token not found. Please log in again.');
                           if (currentContext.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content:
-                                    Text('Error donating. Please try again.'),
+                                content: Text(
+                                    'Token not found. Please log in again.'),
                                 backgroundColor: Colors.red,
                               ),
                             );
