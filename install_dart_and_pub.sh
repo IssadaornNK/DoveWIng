@@ -22,7 +22,7 @@ dart --version
 if command -v dart &> /dev/null
 then
     echo "Running dart pub get"
-    dart pub get
+    flutter pub get
 else
     echo "ERROR: dart could not be found."
     exit 1
