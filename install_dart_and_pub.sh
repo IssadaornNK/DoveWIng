@@ -25,4 +25,4 @@ else
 fi
 
 # Run pub get
-pub get
+dart pub get
