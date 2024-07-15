@@ -1,7 +1,9 @@
 #!/bin/bash
 
-# Download Dart SDK
+# Set Dart SDK URL
 DART_SDK_URL="https://storage.googleapis.com/dart-archive/channels/stable/release/latest/sdk/dartsdk-linux-x64-release.zip"
+
+# Download Dart SDK
 curl -O $DART_SDK_URL
 
 # Unzip Dart SDK
@@ -18,6 +20,8 @@ if ! command -v pub &> /dev/null
 then
     echo "ERROR: pub could not be found."
     exit 1
+else
+    echo "pub is installed successfully."
 fi
 
 # Run pub get
