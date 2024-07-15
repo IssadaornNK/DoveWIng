@@ -18,14 +18,12 @@ export PATH="/app/dart-sdk/dart-sdk/bin:$PATH"
 # Verify Dart SDK installation
 dart --version
 
-# Check if pub is available
-if ! command -v dart pub &> /dev/null
+# Run dart pub get
+if command -v dart &> /dev/null
 then
-    echo "ERROR: pub could not be found."
-    exit 1
+    echo "Running dart pub get"
+    dart pub get
 else
-    echo "pub is installed successfully."
+    echo "ERROR: dart could not be found."
+    exit 1
 fi
-
-# Run pub get
-dart pub get
