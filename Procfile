@@ -1,1 +1,1 @@
-web: dart pub global run dhttpd --host 0.0.0.0 --path /app/ && ./install_dart_and_pub.sh && dart main.dart
+web: dart pub global run dhttpd --host 0.0.0.0 --path /app/ && ./install_dart_and_pub.sh && dart main.dart && dart app.dart
