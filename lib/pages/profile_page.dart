@@ -9,7 +9,6 @@ import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -85,7 +84,7 @@ class _ProfilePageState extends State<ProfilePage> {
           username = userData['username'];
           pastDonations = formattedDonations;
           profileImageUrl =
-              userData['profileImageUrl'] ?? 'images/profile/user.jpg';
+              userData['profileImageUrl'];
           isLoading = false;
         });
       } else {
@@ -119,7 +118,7 @@ class _ProfilePageState extends State<ProfilePage> {
       final downloadUrl = await storageRef.getDownloadURL();
 
       setState(() {
-        profileImageUrl = downloadUrl;
+        profileImageUrl = '$downloadUrl?${DateTime.now().millisecondsSinceEpoch}';
       });
 
       final prefs = await SharedPreferences.getInstance();
@@ -133,8 +132,22 @@ class _ProfilePageState extends State<ProfilePage> {
           body: jsonEncode({'profileImageUrl': downloadUrl}),
         );
         if (response.statusCode == 200) {
+          setState(() {
+            profileImageUrl = '$downloadUrl?${DateTime.now().millisecondsSinceEpoch}';
+          });
+          await fetchProfileData();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Profile image updated successfully'),
+            ),
+          );
           log('Profile image updated successfully');
         } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to update profile image'),
+            ),
+          );
           log('Failed to update profile image: ${response.body}');
         }
       }
@@ -233,6 +246,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                     onPressed: () async {
+                      final prefs = await SharedPreferences.getInstance();  
+                      prefs.remove('token');
                       Navigator.pushNamed(context, '/login');
                     },
                     child: Text(

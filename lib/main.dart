@@ -44,7 +44,6 @@ class DovewingApp extends StatelessWidget {
           ),
         ),
       ),
-      home: HomePage(),
       initialRoute: '/',
       routes: {
         '/': (context) => const LandingPage(),
