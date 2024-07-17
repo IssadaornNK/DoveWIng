@@ -23,7 +23,6 @@ class _ProfilePageState extends State<ProfilePage> {
   String errorMessage = '';
   bool isLoading = true;
   List<Map<String, dynamic>> pastDonations = [];
-  String profileImageUrl = '';
 
   @override
   void initState() {
@@ -83,8 +82,6 @@ class _ProfilePageState extends State<ProfilePage> {
         setState(() {
           username = userData['username'];
           pastDonations = formattedDonations;
-          profileImageUrl =
-              userData['profileImageUrl'];
           isLoading = false;
         });
       } else {
@@ -99,60 +96,6 @@ class _ProfilePageState extends State<ProfilePage> {
         errorMessage = 'Error: ${e.toString()}';
         isLoading = false;
       });
-    }
-  }
-
-  Future<void> uploadImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile == null) return;
-
-    final file = File(pickedFile.path);
-    final fileName = pickedFile.name;
-    final storageRef =
-        FirebaseStorage.instance.ref().child('profile_images/$fileName');
-
-    try {
-      await storageRef.putFile(file);
-      final downloadUrl = await storageRef.getDownloadURL();
-
-      setState(() {
-        profileImageUrl = '$downloadUrl?${DateTime.now().millisecondsSinceEpoch}';
-      });
-
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('token');
-      if (token != null) {
-        final response = await http.put(
-          Uri.parse('http://localhost:3307/user/profile-image'),
-          headers: {
-            'Content-Type': 'application/json; charset=UTF-8',
-            'Authorization': 'Bearer $token'},
-          body: jsonEncode({'profileImageUrl': downloadUrl}),
-        );
-        if (response.statusCode == 200) {
-          setState(() {
-            profileImageUrl = '$downloadUrl?${DateTime.now().millisecondsSinceEpoch}';
-          });
-          await fetchProfileData();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Profile image updated successfully'),
-            ),
-          );
-          log('Profile image updated successfully');
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Failed to update profile image'),
-            ),
-          );
-          log('Failed to update profile image: ${response.body}');
-        }
-      }
-    } catch (e) {
-      log('Failed to upload image: $e');
     }
   }
 
@@ -186,21 +129,14 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(
+              const Center(
                 child: Stack(
                   children: [
                     CircleAvatar(
                       radius: 50,
-                      backgroundImage: profileImageUrl.isNotEmpty
-                          ? NetworkImage(profileImageUrl)
-                          : const AssetImage('images/profile/loligirl.png')
+                      backgroundImage: AssetImage('images/profile/loligirl.png')
                               as ImageProvider,
                     ),
-                    Positioned(
-                        child: IconButton(
-                      icon: const Icon(Icons.camera_alt, color: Colors.blue),
-                      onPressed: uploadImage,
-                    ))
                   ],
                 ),
               ),

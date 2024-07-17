@@ -35,6 +35,25 @@ class HomePage extends StatelessWidget {
           "'Land of the Unfree' On June 24th, 2022 the United States Supreme Court ruled to end protections to the right to abortion. This means that now individual states across the USA regulate the right to abortion. Abortion is now totally or near-totally banned in 26 states in the USA — more than half of the country — with more poised to enact restrictions or bans on the right to abortion.",
       imageUrl: 'images/campaigns/campaign3.jpg',
     ),
+    Campaign(
+      title:
+          'Blak Labs Singapore matches complete strangers in a life-saving recruitment campaign for BMDP',
+      description:
+          "For the best part of a year, the Bone Marrow Donor Programme (BMDP) has been working with Blak Labs to build an integrated recruitment campaign to sign up new donors. The campaign called '#Match4Life' launched across digital, outdoor and social channels just in time for the inaugural World Marrow Do",
+      imageUrl: 'images/campaigns/campaign4.jpeg',
+    ),
+    Campaign(
+      title: 'Charity campaign flyer',
+      description:
+          "Customize this design with your video, photos and text. Easy to use online tools with thousands of stock photos, clipart and effects. Free downloads, great for printing and sharing online. A4. Tags: charity campaign, charity donation poster, fundraising event design template flyer, help poster, poor children, Campaign Posters, Fundraising, Black History Month , fundraising-posters Poster",
+      imageUrl: 'images/campaigns/campaign5.jpeg',
+    ),
+    Campaign(
+      title: 'Bulgarian Donors',
+      description:
+          "Over the last few years, Bulgarian society has changed its perception of charity. Solidarity and care have become stronger. Statistics show that more and more people started to donate to various causes (50% of the population). Most of them send small contributions. To preserve this trend and motivate the community the Bulgarian Donors’ Forum initiated an awareness campaign. Our strategy is to show respect and gratitude to all anonymous donors in Bulgaria.",
+      imageUrl: 'images/campaigns/campaign6.jpeg',
+    ),
   ];
   @override
   Widget build(BuildContext context) {
@@ -70,86 +89,89 @@ class HomePage extends StatelessWidget {
                     fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
-              _buildCampaignCard(context,
-                  imagePath: campaigns[0].imageUrl,
-                  campaignName: campaigns[0].title,
-                  campaignDetails: campaigns[0].description),
-              const SizedBox(height: 10),
-              _buildCampaignCard(context,
-                  imagePath: campaigns[1].imageUrl,
-                  campaignName: campaigns[1].title,
-                  campaignDetails: campaigns[1].description),
-              const SizedBox(height: 10),
-              _buildCampaignCard(context,
-                  imagePath: campaigns[2].imageUrl,
-                  campaignName: campaigns[2].title,
-                  campaignDetails: campaigns[2].description),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: campaigns.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: [
+                      _buildCampaignCard(
+                        context,
+                        imagePath: campaigns[index].imageUrl,
+                        campaignName: campaigns[index].title,
+                        campaignDetails: campaigns[index].description,
+                      ),
+                      if (index < campaigns.length - 1)
+                        const SizedBox(height: 10),
+                    ],
+                  );
+                },
+              ),
             ],
           ),
         ),
       ),
     );
   }
+}
 
-  Widget _buildCampaignCard(BuildContext context,
-      {String? imagePath, String? campaignName, String? campaignDetails}) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(context, '/campaign',
-            arguments: Campaign(
-                title: campaignName,
-                description: campaignDetails,
-                imageUrl: imagePath ?? ''));
-      },
-      child: Container(
-        padding: const EdgeInsets.all(8.0),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Colors.blue),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              height: 150,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: imagePath != null
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.asset(
-                        imagePath,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: double.infinity,
-                      ),
-                    )
-                  : const Center(
-                      child: Text('No Image',
-                          style: TextStyle(color: Colors.white))),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              campaignName!,
-              style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue),
-            ),
-            const SizedBox(height: 5),
-            Text(
-              campaignDetails!,
-              style: const TextStyle(fontSize: 14),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
-            ),
-          ],
-        ),
+Widget _buildCampaignCard(BuildContext context,
+    {String? imagePath, String? campaignName, String? campaignDetails}) {
+  return GestureDetector(
+    onTap: () {
+      Navigator.pushNamed(context, '/campaign',
+          arguments: Campaign(
+              title: campaignName,
+              description: campaignDetails,
+              imageUrl: imagePath ?? ''));
+    },
+    child: Container(
+      padding: const EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.blue),
       ),
-    );
-  }
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 150,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: imagePath != null
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.asset(
+                      imagePath,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                    ),
+                  )
+                : const Center(
+                    child: Text('No Image',
+                        style: TextStyle(color: Colors.white))),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            campaignName!,
+            style: const TextStyle(
+                fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            campaignDetails!,
+            style: const TextStyle(fontSize: 14),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
 class CampaignPage extends StatefulWidget {

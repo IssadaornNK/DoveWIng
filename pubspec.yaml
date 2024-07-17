@@ -68,6 +68,9 @@ flutter:
     - images/campaigns/campaign1.jpg
     - images/campaigns/campaign2.jpg
     - images/campaigns/campaign3.jpg
+    - images/campaigns/campaign4.jpeg
+    - images/campaigns/campaign5.jpeg
+    - images/campaigns/campaign6.jpeg
     - images/profile/loligirl.png
     - images/profile/user.jpg
   #   - images/a_dot_ham.jpeg
