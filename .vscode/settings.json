@@ -3,5 +3,6 @@
     "files.associations": {
         "memory": "cpp"
     },
-    "C_Cpp.errorSquiggles": "disabled"
+    "C_Cpp.errorSquiggles": "disabled",
+    "java.compile.nullAnalysis.mode": "automatic"
 }
