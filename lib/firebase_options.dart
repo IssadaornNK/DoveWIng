@@ -61,4 +61,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'dovewing-a55c5.appspot.com',
     measurementId: 'G-B1J034M4SV',
   );
+
 }

@@ -1,9 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
@@ -68,7 +65,7 @@ class _ProfilePageState extends State<ProfilePage> {
           // Parse the date string into a DateTime object
           DateTime originalDate = DateTime.parse(donation['date']);
           // Add one day to the original date
-          DateTime newDate = originalDate.add(Duration(days: 1));
+          DateTime newDate = originalDate.add(const Duration(days: 1));
           // Format the new date back to the desired string format
           String formattedDate = DateFormat('yyyy-MM-dd').format(newDate);
 
@@ -183,6 +180,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     onPressed: () async {
                       final prefs = await SharedPreferences.getInstance();  
                       prefs.remove('token');
+                      // ignore: use_build_context_synchronously
                       Navigator.pushNamed(context, '/login');
                     },
                     child: Text(
