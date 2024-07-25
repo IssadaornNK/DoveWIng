@@ -19,36 +19,13 @@ class DefaultFirebaseOptions {
     if (kIsWeb) {
       return web;
     }
-    switch (defaultTargetPlatform) {
-      case TargetPlatform.android:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for android - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
-      case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
-      case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
-      case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
-      case TargetPlatform.linux:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for linux - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
-      default:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions are not supported for this platform.',
-        );
+    else if (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.macOS) {
+      return ios;
+    } 
+    else {
+      throw UnsupportedError(
+        'DefaultFirebaseOptions are not supported for this platform.',
+      );
     }
   }
 
@@ -60,6 +37,15 @@ class DefaultFirebaseOptions {
     authDomain: 'dovewing-a55c5.firebaseapp.com',
     storageBucket: 'dovewing-a55c5.appspot.com',
     measurementId: 'G-B1J034M4SV',
+  );
+
+   static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyDYX0euBMDUcI0VKEs5dSFe3KbtdFrbNUc',
+    appId: '1:523363027388:ios:e6297204056a4e897803b9',
+    messagingSenderId: '523363027388',
+    projectId: 'dovewing-a55c5',
+    storageBucket: 'dovewing-a55c5.appspot.com',
+    iosBundleId: 'com.example.dovewing',
   );
 
 }
