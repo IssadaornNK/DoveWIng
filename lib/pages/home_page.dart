@@ -204,7 +204,7 @@ class _CampaignPageState extends State<CampaignPage> {
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
                   width: deviceWidth,
@@ -252,13 +252,14 @@ class _CampaignPageState extends State<CampaignPage> {
               ElevatedButton(
                 onPressed: _selectedDonationName != null &&
                         _selectedDonationType != null &&
-                        _selectedDonationAmount != null
+                        _selectedDonationAmount != null 
                     ? () async {
                         // Prepare donation data
                         final donationData = {
                           'name': _selectedDonationName,
                           'amount': _selectedDonationAmount,
                           'type': _selectedDonationType,
+                          'imgurl': campaign.imageUrl
                         };
 
                         // Capture the context before the asynchronous operation

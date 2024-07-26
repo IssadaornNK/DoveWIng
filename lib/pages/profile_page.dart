@@ -139,7 +139,7 @@ class _ProfilePageState extends State<ProfilePage> {
               const SizedBox(height: 16),
               Center(
                 child: Text(
-                  username,
+                  username != '' ? username : 'No username found',
                   style: const TextStyle(fontSize: 24, color: Colors.blue),
                 ),
               ),
@@ -181,10 +181,15 @@ class _ProfilePageState extends State<ProfilePage> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: ListTile(
-                          leading: const SizedBox(
+                          leading: SizedBox(
                             height: 50,
                             width: 50,
-                            child: Placeholder(),
+                            child: Image.asset(
+                              donation['imgurl'],
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              height: double.infinity,
+                            ),
                           ),
                           title: Text(donation['name']!),
                           subtitle: Text(
