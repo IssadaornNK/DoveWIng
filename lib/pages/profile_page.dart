@@ -131,7 +131,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     CircleAvatar(
                       radius: 50,
                       backgroundImage: AssetImage('images/profile/loligirl.png')
-                              as ImageProvider,
+                          as ImageProvider,
                     ),
                   ],
                 ),
@@ -144,9 +144,28 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               const SizedBox(height: 32),
-              const Text(
-                'Past Donations',
-                style: TextStyle(fontSize: 18, color: Colors.blue),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Donated Campaign',
+                    style: TextStyle(fontSize: 24, color: Colors.blue),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      // Handle "See more" button press
+                      
+                    },
+                    child: const Text(
+                      'See more',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 8),
               Expanded(
@@ -154,15 +173,35 @@ class _ProfilePageState extends State<ProfilePage> {
                   itemCount: pastDonations.length,
                   itemBuilder: (context, index) {
                     final donation = pastDonations[index];
-                    return ListTile(
-                      title:
-                          Text('${donation['name']} \$${donation['amount']}'),
-                      subtitle: Text(
-                          'Date: ${donation['date']} (${donation['type']})'),
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: ListTile(
+                          leading: const SizedBox(
+                            height: 50,
+                            width: 50,
+                            child: Placeholder(),
+                          ),
+                          title: Text(donation['name']!),
+                          subtitle: Text(
+                            '\$${donation['amount']} \nDate: ${donation['date']} (${donation['type']})',
+                            style: const TextStyle(height: 1.5),
+                          ),
+                        ),
+                      ),
                     );
                   },
                 ),
               ),
+              const Text(
+                'FAQ',
+                style: TextStyle(fontSize: 24, color: Colors.blue),
+              ),
+              const SizedBox(height: 16),
               Center(
                 child: Container(
                   width: double.infinity,
@@ -178,7 +217,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                     onPressed: () async {
-                      final prefs = await SharedPreferences.getInstance();  
+                      final prefs = await SharedPreferences.getInstance();
                       prefs.remove('token');
                       // ignore: use_build_context_synchronously
                       Navigator.pushNamed(context, '/login');
