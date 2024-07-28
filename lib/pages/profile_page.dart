@@ -154,7 +154,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   TextButton(
                     onPressed: () {
                       // Handle "See more" button press
-                      
+                      Navigator.pushNamed(context, '/donated');
                     },
                     child: const Text(
                       'See more',

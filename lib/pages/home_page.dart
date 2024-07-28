@@ -182,6 +182,7 @@ class CampaignPage extends StatefulWidget {
 
 class _CampaignPageState extends State<CampaignPage> {
   String? _selectedDonationName;
+  String? _selectedDonationDetails;
   String? _selectedDonationType;
   double? _selectedDonationAmount;
 
@@ -243,20 +244,22 @@ class _CampaignPageState extends State<CampaignPage> {
                     color: Colors.blue),
               ),
               const SizedBox(height: 10),
-              _buildDonationOption('One-time donation: \$2.59', campaign.title,
+              _buildDonationOption('One-time donation: \$2.59', campaign.title, campaign.description,
                   'one-time', 2.59),
               const SizedBox(height: 10),
               _buildDonationOption('Continuous donation: \$0.49/month',
-                  campaign.title, 'continuous', 0.49),
+                  campaign.title, campaign.description, 'continuous', 0.49),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _selectedDonationName != null &&
                         _selectedDonationType != null &&
-                        _selectedDonationAmount != null 
+                        _selectedDonationAmount != null &&
+                        _selectedDonationDetails != null
                     ? () async {
                         // Prepare donation data
                         final donationData = {
                           'name': _selectedDonationName,
+                          'details': _selectedDonationDetails,
                           'amount': _selectedDonationAmount,
                           'type': _selectedDonationType,
                           'imgurl': campaign.imageUrl
@@ -340,7 +343,7 @@ class _CampaignPageState extends State<CampaignPage> {
   }
 
   Widget _buildDonationOption(
-      String text, String name, String type, double amount) {
+      String text, String name, String details, String type, double amount) {
     return Container(
       padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
@@ -358,6 +361,7 @@ class _CampaignPageState extends State<CampaignPage> {
         onChanged: (String? newValue) {
           setState(() {
             _selectedDonationName = name;
+            _selectedDonationDetails = details;
             _selectedDonationType = newValue;
             _selectedDonationAmount = amount;
           });
