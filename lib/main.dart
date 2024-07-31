@@ -7,7 +7,6 @@ import 'pages/login_page.dart';
 import 'pages/register_page.dart';
 import 'pages/home_page.dart';
 import 'pages/donated_page.dart';
-import 'pages/payment_page.dart' as payment_page;
 import 'pages/payment_method_page.dart' as payment_method_page;
 import 'pages/payment_success_page.dart';
 import 'pages/profile_page.dart';
@@ -49,9 +48,8 @@ class DovewingApp extends StatelessWidget {
         '/': (context) => const LandingPage(),
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),
-        '/home': (context) => HomePage(),
+        '/home': (context) => const HomePage(),
         '/donated': (context) => const DonatedPage(),
-        '/payment': (context) => const payment_page.PaymentPage(),
         '/payment_method': (context) => const payment_method_page.PaymentMethodPage(),
         '/payment_success': (context) => const PaymentSuccessPage(),
         '/profile': (context) => const ProfilePage(),

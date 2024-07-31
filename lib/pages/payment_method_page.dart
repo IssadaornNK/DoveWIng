@@ -1,7 +1,13 @@
+import 'dart:convert';
+import 'dart:developer';
+
+import 'package:dove_wings/pages/home_page.dart';
+import 'package:dove_wings/server/models/campaign.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 
 class PaymentMethodPage extends StatefulWidget {
   const PaymentMethodPage({super.key});
@@ -13,6 +19,7 @@ class PaymentMethodPage extends StatefulWidget {
 class _PaymentMethodPageState extends State<PaymentMethodPage> {
   final _formKey = GlobalKey<FormState>();
   final _cardNumberController = TextEditingController();
+  final _cardNameController = TextEditingController();
   final _expiryDateController = TextEditingController();
   final _cvvController = TextEditingController();
   String selectedValue = 'Visa Card'; // Default value
@@ -20,6 +27,7 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
   @override
   void dispose() {
     _cardNumberController.dispose();
+    _cardNameController.dispose();
     _expiryDateController.dispose();
     _cvvController.dispose();
     super.dispose();
@@ -39,7 +47,8 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
           data: ThemeData.light().copyWith(
             primaryColor: const Color.fromARGB(255, 5, 119, 208),
             hintColor: const Color.fromARGB(255, 5, 119, 208),
-            buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.primary),
+            buttonTheme:
+                const ButtonThemeData(textTheme: ButtonTextTheme.primary),
           ),
           child: child!,
         );
@@ -47,7 +56,8 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
     );
 
     if (selectedDate != null) {
-      final formattedDate = '${selectedDate.month.toString().padLeft(2, '0')}/${selectedDate.year.toString().substring(2)}';
+      final formattedDate =
+          '${selectedDate.month.toString().padLeft(2, '0')}/${selectedDate.year.toString().substring(2)}';
       setState(() {
         _expiryDateController.text = formattedDate;
       });
@@ -56,6 +66,11 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
 
   @override
   Widget build(BuildContext context) {
+    final Campaign paymentCampaign =
+        ModalRoute.of(context)!.settings.arguments as Campaign;
+
+    final int? donationId = paymentCampaign.donationId;
+
     return Form(
       key: _formKey,
       child: Scaffold(
@@ -139,7 +154,8 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
                 inputFormatters: [
                   CardNumberInputFormatter(),
                 ],
-                maxLength: 19, // Allow space-separated 16 digits + spaces (4 groups of 4)
+                maxLength:
+                    19, // Allow space-separated 16 digits + spaces (4 groups of 4)
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your card number';
@@ -153,6 +169,7 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
               ),
               const SizedBox(height: 10),
               TextFormField(
+                controller: _cardNameController,
                 decoration: InputDecoration(
                   labelText: 'Name on Card',
                   labelStyle: GoogleFonts.inika(),
@@ -183,7 +200,8 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your expiry date';
                       }
-                      if (!RegExp(r'^(0[1-9]|1[0-2])\/\d{2}$').hasMatch(value)) {
+                      if (!RegExp(r'^(0[1-9]|1[0-2])\/\d{2}$')
+                          .hasMatch(value)) {
                         return 'Expiry date must be in the format MM/YY';
                       }
                       return null;
@@ -228,10 +246,84 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        _formKey.currentState!.save();
-                        Navigator.pushNamed(context, '/payment_success');
+                        final paymentData = {
+                          'paymentType': selectedValue,
+                          'cardNumber':
+                              _cardNumberController.text.replaceAll(' ', ''),
+                          'cardName': _cardNameController.text,
+                          'expiryDate': _expiryDateController.text,
+                          'cvv': _cvvController.text,
+                          'DonationId': donationId,
+                        };
+
+                        try {
+                          final currentContext = context;
+                          final token = await getToken();
+                          if (token != null) {
+                            final response = await http.post(
+                              Uri.parse('http://localhost:3307/payments'),
+                              headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer $token'
+                              },
+                              body: jsonEncode(paymentData),
+                            );
+                            if (response.statusCode == 200) {
+                              // Payment successful
+                              log('Payment submitted successfully!');
+                              // Show success message or navigate to confirmation screen (replace with your logic)
+                              if (currentContext.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Payment submitted.'),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                                _formKey.currentState!.save();
+                                Navigator.pushNamed(
+                                    context, '/payment_success');
+                              }
+                            } else {
+                              // Payment failed
+                              log('Error submitting payment: ${response.statusCode}');
+                              // Show error message to user (replace with your error handling)
+                              if (currentContext.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                        'Error submitting payment. Please try again.'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            }
+                          } else {
+                            log('Token not found. Please log in again.');
+                            if (currentContext.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      'Token not found. Please log in again.'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          }
+                        } catch (e) {
+                          log('Error submitting payment: $e');
+                          final currentContext = context;
+                          if (currentContext.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                    'Error submitting payment. Please try again.'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        }
                       }
                     },
                     child: Text(
@@ -247,7 +339,6 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -267,14 +358,14 @@ class CardNumberInputFormatter extends TextInputFormatter {
     }
 
     String formattedString = '';
-    
+
     for (int i = 0; i < newString.length; i++) {
       if (i > 0 && i % 4 == 0) {
         formattedString += ' ';
       }
       formattedString += newString[i];
     }
-    
+
     return newValue.copyWith(
       text: formattedString,
       selection: TextSelection.collapsed(offset: formattedString.length),

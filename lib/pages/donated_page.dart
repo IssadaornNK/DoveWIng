@@ -159,13 +159,6 @@ class _DonatedPageState extends State<DonatedPage> {
 Widget _buildDonatedCampaignCard(BuildContext context,
     {String? imagePath, String? campaignName, String? campaignDetails}) {
   return GestureDetector(
-    onTap: () {
-      Navigator.pushNamed(context, '/campaign', arguments: {
-        'title': campaignName,
-        'description': campaignDetails,
-        'imageUrl': imagePath ?? '',
-      });
-    },
     child: Container(
       padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
