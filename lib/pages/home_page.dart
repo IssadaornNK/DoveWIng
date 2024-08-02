@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:math' hide log;
 
 import 'package:dove_wings/server/models/campaign.dart';
 import 'package:flutter/material.dart';
@@ -103,7 +104,6 @@ class _HomePageState extends State<HomePage> {
 
   final List<Campaign> campaigns = [
     Campaign(
-      donationId: 1,
       title: 'StopTrashPlant',
       description:
           '#StopTrashPlant- Do not waste life, become a Organ donor. The organs recreated in this Print Advertisement is to spread the awareness of Donate Organ, To celebrate the upcoming National Organ Donation Day, Fundación Argentina de Trasplante and advertising agency DDB joined efforts to come up with a campaign that took place on the streets of Buenos Aires. The campaign had two main objectives: to raise awareness about organ donation and to let people express their willingness to become organ donors.',
@@ -111,7 +111,6 @@ class _HomePageState extends State<HomePage> {
       isPayment: false,
     ),
     Campaign(
-      donationId: 2,
       title: 'People at Work',
       description:
           'Paving the Way for Gender Equality in Construction: A Groundbreaking Initiative ‘People at Work’ by Publicis Brazil and the Women in Construction Institute. In a bid to catalyze a transformative shift in the construction industry, Publicis Brazil, in collaboration with the Women in Construction Institute, has launched a groundbreaking initiative ‘People at Work’ on this year’s International Women’s Day. With women accounting for just one in ten construction workers, there’s a pressing need to address the gender disparities entrenched within this historically male-dominated sector. This article delves into the initiative’s objectives, impact, and how you can contribute to fostering a more inclusive work environment in construction.',
@@ -119,7 +118,6 @@ class _HomePageState extends State<HomePage> {
       isPayment: false,
     ),
     Campaign(
-      donationId: 3,
       title: 'Land of the Unfree',
       description:
           "'Land of the Unfree' On June 24th, 2022 the United States Supreme Court ruled to end protections to the right to abortion. This means that now individual states across the USA regulate the right to abortion. Abortion is now totally or near-totally banned in 26 states in the USA — more than half of the country — with more poised to enact restrictions or bans on the right to abortion.",
@@ -127,7 +125,6 @@ class _HomePageState extends State<HomePage> {
       isPayment: false,
     ),
     Campaign(
-      donationId: 4,
       title:
           'Blak Labs Singapore matches complete strangers in a life-saving recruitment campaign for BMDP',
       description:
@@ -136,7 +133,6 @@ class _HomePageState extends State<HomePage> {
       isPayment: false,
     ),
     Campaign(
-      donationId: 5,
       title: 'Charity campaign flyer',
       description:
           "Customize this design with your video, photos and text. Easy to use online tools with thousands of stock photos, clipart and effects. Free downloads, great for printing and sharing online. A4. Tags: charity campaign, charity donation poster, fundraising event design template flyer, help poster, poor children, Campaign Posters, Fundraising, Black History Month , fundraising-posters Poster",
@@ -144,7 +140,6 @@ class _HomePageState extends State<HomePage> {
       isPayment: false,
     ),
     Campaign(
-      donationId: 6,
       title: 'Bulgarian Donors',
       description:
           "Over the last few years, Bulgarian society has changed its perception of charity. Solidarity and care have become stronger. Statistics show that more and more people started to donate to various causes (50% of the population). Most of them send small contributions. To preserve this trend and motivate the community the Bulgarian Donors’ Forum initiated an awareness campaign. Our strategy is to show respect and gratitude to all anonymous donors in Bulgaria.",
@@ -155,6 +150,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    List<Map<String, dynamic>> filteredDonations = pastDonations
+        .where((donation) => donation['isPayment'] != true)
+        .toList();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -187,62 +185,55 @@ class _HomePageState extends State<HomePage> {
                       fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
-                pastDonations.any((donation) => donation['isPayment'] != true)
-                    ? Column(
-                        children: [
-                          SizedBox(
-                            height: isExpanded ? null : 100,
-                            child: ListView.builder(
-                              itemCount: isExpanded ? pastDonations.length : 1,
-                              shrinkWrap: isExpanded,
-                              physics: isExpanded
-                                  ? const AlwaysScrollableScrollPhysics()
-                                  : const NeverScrollableScrollPhysics(),
-                              itemBuilder: (context, index) {
-                                final donation = pastDonations[index];
-                                if (donation['isPayment'] == true) {
-                                  return const SizedBox.shrink();
-                                } else {
-                                  return Column(
-                                    children: [
-                                      _buildProgressCampaignCard(
-                                        context,
-                                        donationId: donation['DonationId'],
-                                        imagePath: donation['imgurl'],
-                                        campaignName: donation['title'],
-                                        campaignDetails: donation['details'],
-                                        isPayment: donation['isPayment'],
-                                      ),
-                                      if (index < donation.length - 1)
-                                        const SizedBox(height: 10),
-                                    ],
-                                  );
-                                }
-                              },
+                isLoading
+                    ? const CircularProgressIndicator()
+                    : pastDonations.isEmpty
+                        ? const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 16.0),
+                            child: Center(
+                              child: Text(
+                                'No Campaign Progress available',
+                                style:
+                                    TextStyle(fontSize: 16, color: Colors.grey),
+                              ),
                             ),
+                          )
+                        : Column(
+                            children: [
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: isExpanded
+                                    ? filteredDonations.length
+                                    : min(filteredDonations.length, 2),
+                                itemBuilder: (context, index) {
+                                  final donation = filteredDonations[index];
+                                  if (donation['isPayment'] != true) {
+                                    return _buildProgressCampaignCard(
+                                      context,
+                                      donationId: donation['donationId'],
+                                      imagePath: donation['imgurl'],
+                                      campaignName: donation['title'],
+                                      campaignDetails: donation['details'],
+                                      isPayment: donation['isPayment'],
+                                    );
+                                  } else {
+                                    return const SizedBox.shrink();
+                                  }
+                                },
+                              ),
+                              if (filteredDonations.length > 2)
+                                TextButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      isExpanded = !isExpanded;
+                                    });
+                                  },
+                                  child: Text(
+                                      isExpanded ? 'See less' : 'See more'),
+                                ),
+                            ],
                           ),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: TextButton(
-                              onPressed: () {
-                                setState(() {
-                                  isExpanded = !isExpanded;
-                                });
-                              },
-                              child: Text(isExpanded ? 'See less' : 'See more'),
-                            ),
-                          ),
-                        ],
-                      )
-                    : const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16.0),
-                        child: Center(
-                          child: Text(
-                            'No Campaign Progress available',
-                            style: TextStyle(fontSize: 16, color: Colors.grey),
-                          ),
-                        ),
-                      ),
                 const SizedBox(height: 10),
                 const Text(
                   'Campaign for today',
@@ -262,7 +253,6 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     _buildCampaignCard(
                       context,
-                      donationId: campaigns[index].donationId!,
                       imagePath: campaigns[index].imageUrl,
                       campaignName: campaigns[index].title,
                       campaignDetails: campaigns[index].description,
@@ -293,7 +283,7 @@ Widget _buildProgressCampaignCard(
     onTap: () {
       // Navigate to Payment Method page
       Navigator.pushNamed(context, '/payment_method',
-          arguments: Campaign(
+          arguments: ProgressCampaign(
               donationId: donationId,
               title: campaignName,
               description: campaignDetails,
@@ -339,15 +329,13 @@ Widget _buildProgressCampaignCard(
 }
 
 Widget _buildCampaignCard(BuildContext context,
-    {required int donationId,
-    required String imagePath,
+    {required String imagePath,
     required String campaignName,
     required String campaignDetails}) {
   return GestureDetector(
     onTap: () {
       Navigator.pushNamed(context, '/campaign',
           arguments: Campaign(
-              donationId: 0,
               title: campaignName,
               description: campaignDetails,
               imageUrl: imagePath,
@@ -520,8 +508,7 @@ class _CampaignPageState extends State<CampaignPage> {
                                   backgroundColor: Colors.green,
                                 ),
                               );
-                              Navigator.pushNamed(currentContext,
-                                  '/payment_method'); // Can be used for future payment flow
+                              Navigator.pushNamed(currentContext, '/home');
                             }
                           } else {
                             // Donation failed

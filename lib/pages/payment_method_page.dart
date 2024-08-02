@@ -66,9 +66,17 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Campaign paymentCampaign =
-        ModalRoute.of(context)!.settings.arguments as Campaign;
+    final ProgressCampaign? paymentCampaign =
+        ModalRoute.of(context)!.settings.arguments as ProgressCampaign?;
 
+    if (paymentCampaign == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Error')),
+        body: const Center(
+          child: Text('No campaign found'),
+        ),
+      );
+    }
     final int? donationId = paymentCampaign.donationId;
 
     return Form(
@@ -255,7 +263,7 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
                           'cardName': _cardNameController.text,
                           'expiryDate': _expiryDateController.text,
                           'cvv': _cvvController.text,
-                          'DonationId': donationId,
+                          if(donationId != null) 'DonationId': donationId,
                         };
 
                         try {
