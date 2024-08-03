@@ -218,7 +218,7 @@ class _HomePageState extends State<HomePage> {
                                       isPayment: donation['isPayment'],
                                     );
                                   } else {
-                                    return const SizedBox.shrink();
+                                    return const Text('You do not have any campaign progress');
                                   }
                                 },
                               ),
@@ -313,7 +313,7 @@ Widget _buildProgressCampaignCard(
               style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black)),
+                  color: Colors.blue)),
           subtitle: Text(
             campaignDetails.isNotEmpty
                 ? campaignDetails

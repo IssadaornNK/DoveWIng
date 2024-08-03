@@ -56,7 +56,10 @@ class _ProfilePageState extends State<ProfilePage> {
       log('User Response body: ${userResponse.body}');
       log('Donation Response body: ${donationResponse.body}');
 
-      if (userResponse.statusCode == 200 &&
+      setState(() {
+        username = jsonDecode(userResponse.body)['username'];
+      });
+      if (userResponse.statusCode == 200 ||
           donationResponse.statusCode == 200) {
         final userData = jsonDecode(userResponse.body);
         final donationData = jsonDecode(donationResponse.body);
@@ -76,7 +79,6 @@ class _ProfilePageState extends State<ProfilePage> {
         log('Donation Data: $donationData');
 
         setState(() {
-          username = userData['username'];
           pastDonations = formattedDonations;
           isLoading = false;
         });
@@ -120,129 +122,150 @@ class _ProfilePageState extends State<ProfilePage> {
             },
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Center(
-                child: Stack(
+        body: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundImage: AssetImage('images/profile/loligirl.png')
-                          as ImageProvider,
+                    const Center(
+                      child: Stack(
+                        children: [
+                          CircleAvatar(
+                            radius: 50,
+                            backgroundImage:
+                                AssetImage('images/profile/loligirl.png')
+                                    as ImageProvider,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Center(
+                      child: Text(
+                        username.isNotEmpty ? username : 'No username found',
+                        style:
+                            const TextStyle(fontSize: 24, color: Colors.blue),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Donated Campaign',
+                          style: TextStyle(fontSize: 24, color: Colors.blue),
+                        ),
+                        if (pastDonations.isNotEmpty)
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/donated');
+                            },
+                            child: const Text(
+                              'See more',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.blue,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Expanded(
+                      child: pastDonations.isEmpty
+                          ? const Center(
+                              child: Text(
+                                'No Campaign Available',
+                                style:
+                                    TextStyle(fontSize: 18, color: Colors.grey),
+                              ),
+                            )
+                          : ListView.builder(
+                              itemCount: pastDonations.length,
+                              itemBuilder: (context, index) {
+                                final donation = pastDonations[index];
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.blue),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: ListTile(
+                                      leading: SizedBox(
+                                        height: 50,
+                                        width: 50,
+                                        child: Image.asset(
+                                          donation['imgurl'],
+                                          fit: BoxFit.cover,
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                        ),
+                                      ),
+                                      title: Text(
+                                        donation['name']!,
+                                        style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.blue),
+                                      ),
+                                      subtitle: Text(
+                                        '\$${donation['amount']} \nDate: ${donation['date']} (${donation['type']})',
+                                        style: const TextStyle(
+                                            height: 1.5,
+                                            color: Colors.blueGrey),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                    ),
+                    const Text(
+                      'FAQ',
+                      style: TextStyle(fontSize: 24, color: Colors.blue),
+                    ),
+                    const SizedBox(height: 16),
+                    Center(
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color.fromARGB(
+                                255, 5, 119, 208), // background color
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 40, vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          onPressed: () async {
+                            final prefs = await SharedPreferences.getInstance();
+                            prefs.remove('token');
+                            // ignore: use_build_context_synchronously
+                            Navigator.pushNamed(context, '/login');
+                          },
+                          child: Text(
+                            'Logout',
+                            style: GoogleFonts.inika(
+                              textStyle: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
-              Center(
-                child: Text(
-                  username != '' ? username : 'No username found',
-                  style: const TextStyle(fontSize: 24, color: Colors.blue),
-                ),
-              ),
-              const SizedBox(height: 32),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Donated Campaign',
-                    style: TextStyle(fontSize: 24, color: Colors.blue),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      // Handle "See more" button press
-                      Navigator.pushNamed(context, '/donated');
-                    },
-                    child: const Text(
-                      'See more',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.blue,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: pastDonations.length,
-                  itemBuilder: (context, index) {
-                    final donation = pastDonations[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: ListTile(
-                          leading: SizedBox(
-                            height: 50,
-                            width: 50,
-                            child: Image.asset(
-                              donation['imgurl'],
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                              height: double.infinity,
-                            ),
-                          ),
-                          title: Text(donation['name']!),
-                          subtitle: Text(
-                            '\$${donation['amount']} \nDate: ${donation['date']} (${donation['type']})',
-                            style: const TextStyle(height: 1.5),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              const Text(
-                'FAQ',
-                style: TextStyle(fontSize: 24, color: Colors.blue),
-              ),
-              const SizedBox(height: 16),
-              Center(
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(
-                          255, 5, 119, 208), // background color
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 40, vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    onPressed: () async {
-                      final prefs = await SharedPreferences.getInstance();
-                      prefs.remove('token');
-                      // ignore: use_build_context_synchronously
-                      Navigator.pushNamed(context, '/login');
-                    },
-                    child: Text(
-                      'Logout',
-                      style: GoogleFonts.inika(
-                        textStyle: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
