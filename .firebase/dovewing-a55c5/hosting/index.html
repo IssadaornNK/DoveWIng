@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <base href="/">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="A new Flutter project.">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="flutter_application_1">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpg" href="../images/dovewingicon.jpg"/>
+
+  <title>dove_wings</title>
+  <link rel="manifest" href="manifest.json">
+
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <script type="module" src="https://www.gstatic.com/firebasejs/9.1.2/firebase-app.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/9.1.2/firebase-auth.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/9.1.2/firebase-firestore.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/9.1.2/firebase-storage.js"></script>
+
+  <!-- Flutter initialization JS code -->
+  <script src="flutter.js" defer></script>
+</head>
+<body>
+  <input type="file" id="file-input">
+  <button id="upload-button">Upload Image</button>
+  <script src="../main.js"></script>
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.1.2/firebase-app.js';
+    import { getStorage } from 'https://www.gstatic.com/firebasejs/9.1.2/firebase-storage.js';
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+      apiKey: "AIzaSyDh2tuUoiTrHxlXqMq8cszdZ8OyPlgrT6U",
+      authDomain: "dovewing-a55c5.firebaseapp.com",
+      projectId: "dovewing-a55c5",
+      storageBucket: "dovewing-a55c5.appspot.com",
+      messagingSenderId: "523363027388",
+      appId: "1:523363027388:web:3c46eaf192c035377803b9",
+      measurementId: "G-B1J034M4SV"
+    };
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const storage= getStorage(app);
+    export {storage};
+  </script>
+  <script src="main.dart.js"></script>
+  <script>
+    window.addEventListener('load', function(ev) {
+      // Download main.dart.js
+      _flutter.loader.loadEntrypoint({
+        serviceWorker: {
+          serviceWorkerVersion: null, // This is injected by flutter build
+        },
+        onEntrypointLoaded: function(engineInitializer) {
+          engineInitializer.initializeEngine().then(function(appRunner) {
+            appRunner.runApp();
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

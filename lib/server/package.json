@@ -3,10 +3,20 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
+    "build": "spack && npm run static && npm run prerender",
+    "static": "cp static/* dist",
+    "prerender": "ts-node prerender.ts",
     "start": "nodemon app.js",
     "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "directories": {
+    "serve": "dist"
+  },
+  "files": [
+    "dist",
+    "app.js"
+  ],
   "keywords": [],
   "author": "",
   "license": "ISC",
